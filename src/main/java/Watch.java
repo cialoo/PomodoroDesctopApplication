@@ -3,23 +3,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 
-public class MyFrame extends JFrame implements ActionListener {
+public class Watch extends JFrame implements ActionListener {
 
     ImageIcon image;
     JLabel label;
     JButton buttonStart;
     JButton buttonStop;
-    JButton buttonSet;
     JButton buttonRestart;
     JTextField textField;
-    int elapsedTime = 0;
-    int remainTime = 0;
-    int seconds = 0;
-    int minutes = 0;
-    int hours = 0;
+    long elapsedTime = 0;
+    long remainTime = 0;
+    long seconds = 0;
+    long minutes = 0;
+    long hours = 0;
     String secondsStr = String.format("%02d", seconds);
     String minutesStr = String.format("%02d", minutes);
     String hoursStr = String.format("%02d", hours);
@@ -27,26 +28,27 @@ public class MyFrame extends JFrame implements ActionListener {
     Timer timer = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            elapsedTime -= 1000;
-            hours = (elapsedTime/3600000);
-            minutes = (elapsedTime/60000) % 60;
-            seconds = (elapsedTime/1000) % 60;
-            secondsStr = String.format("%02d", seconds);
-            minutesStr = String.format("%02d", minutes);
-            hoursStr = String.format("%02d", hours);
-            labelWatch.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
+            if(elapsedTime > 0) {
+                elapsedTime -= 1000;
+                hours = (elapsedTime/3600000);
+                minutes = (elapsedTime/60000) % 60;
+                seconds = (elapsedTime/1000) % 60;
+                secondsStr = String.format("%02d", seconds);
+                minutesStr = String.format("%02d", minutes);
+                hoursStr = String.format("%02d", hours);
+                labelWatch.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
 
-            if (elapsedTime <= 0) {
-                stop();
-                playRing();
-                completeMessage();
+                if (elapsedTime <= 0) {
+                    stop();
+                    playRing();
+                    completeMessage();
+                }
             }
-
         }
     });
 
     Clip clip;
-    MyFrame() {
+    Watch() {
 
         this.setTitle("Pomodoro");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,10 +72,18 @@ public class MyFrame extends JFrame implements ActionListener {
         textField.setForeground(Color.BLACK);
         textField.setBounds(100,100,300,50);
 
-        buttonSet = new JButton();
-        buttonSet.addActionListener(this);
-        buttonSet.setText("Set");
-        buttonSet.setBounds(200, 150, 100,25);
+        textField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                textField.selectAll();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+
+            }
+
+        });
 
         labelWatch = new JLabel();
         labelWatch.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
@@ -99,7 +109,6 @@ public class MyFrame extends JFrame implements ActionListener {
         buttonRestart.setBounds(200, 400, 100,25);
 
         this.add(buttonRestart);
-        this.add(buttonSet);
         this.add(textField);
         this.add(labelWatch);
         this.add(label);
@@ -114,11 +123,12 @@ public class MyFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==buttonStart) {
+            if(elapsedTime == remainTime || elapsedTime <= 0) {
+                set();
+            }
             start();
         } else if (e.getSource()==buttonStop) {
             stop();
-        } else if (e.getSource()==buttonSet) {
-            set();
         } else if (e.getSource()==buttonRestart) {
             restart();
         }
@@ -141,6 +151,7 @@ public class MyFrame extends JFrame implements ActionListener {
         stop();
         elapsedTime = remainTime;
         start();
+
     }
 
     void set() {
@@ -157,10 +168,10 @@ public class MyFrame extends JFrame implements ActionListener {
                 remainTime = elapsedTime;
 
             } else {
-                JOptionPane.showMessageDialog(null, "Wprowadź poprawny czas (HH:MM:SS)!");
+                errorMessage();
             }
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(null, "Wprowadź poprawny czas (HH:MM:SS)!");
+            errorMessage();
         }
 
     }
@@ -185,9 +196,28 @@ public class MyFrame extends JFrame implements ActionListener {
         }
     }
 
+    void playError() {
+        try {
+            File soundFile = new File("error.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            long startPosition = 1000000;
+            clip.setMicrosecondPosition(startPosition);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
     void completeMessage() {
-        JOptionPane.showMessageDialog(null, "Minutnik zakończony!", "Komunikat", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Completed!", "Pomodoro", JOptionPane.INFORMATION_MESSAGE);
         stopRing();
+    }
+
+    void errorMessage() {
+        playError();
+        JOptionPane.showMessageDialog(null, "Enter the correct time (HH:MM:SS)!", "Pomodoro",JOptionPane.WARNING_MESSAGE);
     }
 
 }
