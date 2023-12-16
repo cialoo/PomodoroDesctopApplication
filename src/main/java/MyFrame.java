@@ -1,7 +1,10 @@
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class MyFrame extends JFrame implements ActionListener {
 
@@ -10,8 +13,10 @@ public class MyFrame extends JFrame implements ActionListener {
     JButton buttonStart;
     JButton buttonStop;
     JButton buttonSet;
+    JButton buttonRestart;
     JTextField textField;
     int elapsedTime = 0;
+    int remainTime = 0;
     int seconds = 0;
     int minutes = 0;
     int hours = 0;
@@ -22,7 +27,7 @@ public class MyFrame extends JFrame implements ActionListener {
     Timer timer = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            elapsedTime += 1000;
+            elapsedTime -= 1000;
             hours = (elapsedTime/3600000);
             minutes = (elapsedTime/60000) % 60;
             seconds = (elapsedTime/1000) % 60;
@@ -30,8 +35,17 @@ public class MyFrame extends JFrame implements ActionListener {
             minutesStr = String.format("%02d", minutes);
             hoursStr = String.format("%02d", hours);
             labelWatch.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
+
+            if (elapsedTime <= 0) {
+                stop();
+                playRing();
+                completeMessage();
+            }
+
         }
     });
+
+    Clip clip;
     MyFrame() {
 
         this.setTitle("Pomodoro");
@@ -50,7 +64,7 @@ public class MyFrame extends JFrame implements ActionListener {
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setVerticalAlignment(JLabel.CENTER);
 
-        textField = new JTextField();
+        textField = new JTextField("HH:MM:SS");
         textField.setFont(new Font("Consolas", Font.PLAIN, 35));
         textField.setBackground(Color.GREEN);
         textField.setForeground(Color.BLACK);
@@ -72,13 +86,19 @@ public class MyFrame extends JFrame implements ActionListener {
         buttonStart = new JButton();
         buttonStart.addActionListener(this);
         buttonStart.setText("Start");
-        buttonStart.setBounds(200, 400, 100,25);
+        buttonStart.setBounds(200, 350, 100,25);
 
         buttonStop = new JButton();
         buttonStop.addActionListener(this);
         buttonStop.setText("Stop");
-        buttonStop.setBounds(200, 425, 100,25);
+        buttonStop.setBounds(200, 375, 100,25);
 
+        buttonRestart = new JButton();
+        buttonRestart.addActionListener(this);
+        buttonRestart.setText("Restart");
+        buttonRestart.setBounds(200, 400, 100,25);
+
+        this.add(buttonRestart);
         this.add(buttonSet);
         this.add(textField);
         this.add(labelWatch);
@@ -98,7 +118,9 @@ public class MyFrame extends JFrame implements ActionListener {
         } else if (e.getSource()==buttonStop) {
             stop();
         } else if (e.getSource()==buttonSet) {
-            elapsedTime = 1000*Integer.parseInt(textField.getText());
+            set();
+        } else if (e.getSource()==buttonRestart) {
+            restart();
         }
     }
 
@@ -112,6 +134,60 @@ public class MyFrame extends JFrame implements ActionListener {
 
         timer.stop();
 
+    }
+
+    void restart() {
+
+        stop();
+        elapsedTime = remainTime;
+        start();
+    }
+
+    void set() {
+
+        try {
+            String[] timeComponents = textField.getText().split(":");
+            if (timeComponents.length == 3) {
+                hours = Integer.parseInt(timeComponents[0].trim());
+                minutes = Integer.parseInt(timeComponents[1].trim());
+                seconds = Integer.parseInt(timeComponents[2].trim());
+
+                elapsedTime = hours * 3600000 + minutes * 60000 + seconds * 1000;
+
+                remainTime = elapsedTime;
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Wprowadź poprawny czas (HH:MM:SS)!");
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null, "Wprowadź poprawny czas (HH:MM:SS)!");
+        }
+
+    }
+
+    void playRing() {
+        try {
+            File soundFile = new File("ring.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void stopRing() {
+        if (clip != null) {
+            clip.stop();
+            clip.close();
+        }
+    }
+
+    void completeMessage() {
+        JOptionPane.showMessageDialog(null, "Minutnik zakończony!", "Komunikat", JOptionPane.INFORMATION_MESSAGE);
+        stopRing();
     }
 
 }
