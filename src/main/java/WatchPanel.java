@@ -8,14 +8,14 @@ import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 
-public class Watch extends JFrame implements ActionListener {
+public class WatchPanel extends JPanel implements ActionListener {
 
-    ImageIcon image;
     JLabel label;
+    JTextField textField;
+    JLabel labelWatch;
     JButton buttonStart;
     JButton buttonStop;
     JButton buttonRestart;
-    JTextField textField;
     long elapsedTime = 0;
     long remainTime = 0;
     long seconds = 0;
@@ -24,7 +24,6 @@ public class Watch extends JFrame implements ActionListener {
     String secondsStr = String.format("%02d", seconds);
     String minutesStr = String.format("%02d", minutes);
     String hoursStr = String.format("%02d", hours);
-    JLabel labelWatch;
     Timer timer = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -46,17 +45,10 @@ public class Watch extends JFrame implements ActionListener {
             }
         }
     });
-
     Clip clip;
-    Watch() {
-
-        this.setTitle("Pomodoro");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(500, 500);
+    WatchPanel() {
+        this.setBackground(Color.BLACK);
         this.setLayout(null);
-
-        image = new ImageIcon("logoPomodoro.png");
-        this.setIconImage(image.getImage());
 
         label = new JLabel();
         label.setBounds(0,0,500,100);
@@ -71,18 +63,14 @@ public class Watch extends JFrame implements ActionListener {
         textField.setBackground(Color.GREEN);
         textField.setForeground(Color.BLACK);
         textField.setBounds(100,100,300,50);
-
         textField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 textField.selectAll();
             }
-
             @Override
             public void focusLost(FocusEvent e) {
-
             }
-
         });
 
         labelWatch = new JLabel();
@@ -97,26 +85,26 @@ public class Watch extends JFrame implements ActionListener {
         buttonStart.addActionListener(this);
         buttonStart.setText("Start");
         buttonStart.setBounds(200, 350, 100,25);
+        buttonStart.setFocusable(false);
 
         buttonStop = new JButton();
         buttonStop.addActionListener(this);
         buttonStop.setText("Stop");
         buttonStop.setBounds(200, 375, 100,25);
+        buttonStop.setFocusable(false);
 
         buttonRestart = new JButton();
         buttonRestart.addActionListener(this);
         buttonRestart.setText("Restart");
         buttonRestart.setBounds(200, 400, 100,25);
+        buttonRestart.setFocusable(false);
 
-        this.add(buttonRestart);
+        this.add(label);
         this.add(textField);
         this.add(labelWatch);
-        this.add(label);
         this.add(buttonStart);
         this.add(buttonStop);
-        this.getContentPane().setBackground(Color.BLACK);
-        this.setResizable(false);
-        this.setVisible(true);
+        this.add(buttonRestart);
 
     }
 
@@ -219,5 +207,4 @@ public class Watch extends JFrame implements ActionListener {
         playError();
         JOptionPane.showMessageDialog(null, "Enter the correct time (HH:MM:SS)!", "Pomodoro",JOptionPane.WARNING_MESSAGE);
     }
-
 }
