@@ -6,9 +6,10 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements ActionListener {
 
     ImageIcon image;
-    CardLayout cardLayout;
-    JPanel cardPanel;
-    JButton buttonSwitch;
+
+    private WatchPanel watchPanel;
+    private ProgressPanel progressPanel;
+
     MainFrame() {
 
         this.setTitle("Pomodoro");
@@ -19,37 +20,40 @@ public class MainFrame extends JFrame implements ActionListener {
         image = new ImageIcon("logoPomodoro.png");
         this.setIconImage(image.getImage());
 
-        cardLayout = new CardLayout();
-        cardPanel = new JPanel(cardLayout);
+        watchPanel = new WatchPanel(this);
+        progressPanel = new ProgressPanel(this);
 
-        cardPanel.add(new WatchPanel(), "WatchPanel");
-        cardPanel.add(new ProgressPanel(), "ProgressPanel");
-        cardPanel.setBounds(0,0,500,425);
+        this.setLayout(new CardLayout());
 
-        buttonSwitch = new JButton();
-        buttonSwitch.addActionListener(this);
-        buttonSwitch.setText("Switch");
-        buttonSwitch.setBounds(200, 425, 100,25);
-        buttonSwitch.setFocusable(false);
+        this.add(watchPanel, "WatchPanel");
+        this.add(progressPanel, "ProgressPanel");
 
-        this.add(cardPanel);
-        this.add(buttonSwitch);
-        this.getContentPane().setBackground(Color.BLACK);
         this.setResizable(false);
         this.setVisible(true);;
 
     }
 
-    void switchPanel() {
 
-        cardLayout.next(cardPanel);
+    public void switchToProgressPanel() {
+        CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
+        cardLayout.show(getContentPane(), "ProgressPanel");
+    }
 
+    public void switchToWatchPanel() {
+        CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
+        cardLayout.show(getContentPane(), "WatchPanel");
+    }
+
+    public WatchPanel getWatchPanel() {
+        return watchPanel;
+    }
+
+    public ProgressPanel getProgressPanel() {
+        return progressPanel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==buttonSwitch) {
-            switchPanel();
-        }
+
     }
 }

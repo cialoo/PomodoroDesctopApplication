@@ -46,7 +46,11 @@ public class WatchPanel extends JPanel implements ActionListener {
         }
     });
     Clip clip;
-    WatchPanel() {
+    private MainFrame mainFrame;
+    private JButton switchButton;
+    WatchPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+
         this.setBackground(Color.BLACK);
         this.setLayout(null);
 
@@ -99,6 +103,14 @@ public class WatchPanel extends JPanel implements ActionListener {
         buttonRestart.setBounds(200, 400, 100,25);
         buttonRestart.setFocusable(false);
 
+        switchButton = new JButton();
+        switchButton.setText("Progress");
+        switchButton.setBounds(200, 425, 100,25);
+        switchButton.setFocusable(false);
+
+        switchButton.addActionListener(e -> mainFrame.switchToProgressPanel()); // to mi nie pasi ni hu hu
+
+        this.add(switchButton);
         this.add(label);
         this.add(textField);
         this.add(labelWatch);
@@ -201,10 +213,12 @@ public class WatchPanel extends JPanel implements ActionListener {
     void completeMessage() {
         JOptionPane.showMessageDialog(null, "Completed!", "Pomodoro", JOptionPane.INFORMATION_MESSAGE);
         stopRing();
+        mainFrame.getProgressPanel().updatelabelTime(remainTime);
     }
 
     void errorMessage() {
         playError();
         JOptionPane.showMessageDialog(null, "Enter the correct time (HH:MM:SS)!", "Pomodoro",JOptionPane.WARNING_MESSAGE);
     }
+
 }
