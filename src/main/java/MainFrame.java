@@ -9,6 +9,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     private WatchPanel watchPanel;
     private ProgressPanel progressPanel;
+    private java.net.URL logoUrl;
 
     MainFrame() {
 
@@ -17,7 +18,8 @@ public class MainFrame extends JFrame implements ActionListener {
         this.setSize(500, 500);
         this.setLayout(null);
 
-        image = new ImageIcon("logoPomodoro.png");
+        logoUrl = getClass().getResource("logoPomodoro.png");
+        image = new ImageIcon(logoUrl);
         this.setIconImage(image.getImage());
 
         watchPanel = new WatchPanel(this);

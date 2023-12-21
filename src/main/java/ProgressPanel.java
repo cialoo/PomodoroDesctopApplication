@@ -43,7 +43,7 @@ public class ProgressPanel extends JPanel{
         switchButton.setBounds(200, 425, 100,25);
         switchButton.setFocusable(false);
 
-        switchButton.addActionListener(e -> mainFrame.switchToWatchPanel()); // to mi nie pasi ni hu hu
+        switchButton.addActionListener(e -> mainFrame.switchToWatchPanel());
 
         this.add(switchButton);
         this.add(label);

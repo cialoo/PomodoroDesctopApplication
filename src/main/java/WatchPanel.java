@@ -7,6 +7,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class WatchPanel extends JPanel implements ActionListener {
 
@@ -48,6 +50,8 @@ public class WatchPanel extends JPanel implements ActionListener {
     Clip clip;
     private MainFrame mainFrame;
     private JButton switchButton;
+    URL urlErrorSound;
+    URL urlRingSound;
     WatchPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
@@ -108,7 +112,7 @@ public class WatchPanel extends JPanel implements ActionListener {
         switchButton.setBounds(200, 425, 100,25);
         switchButton.setFocusable(false);
 
-        switchButton.addActionListener(e -> mainFrame.switchToProgressPanel()); // to mi nie pasi ni hu hu
+        switchButton.addActionListener(e -> mainFrame.switchToProgressPanel());
 
         this.add(switchButton);
         this.add(label);
@@ -178,8 +182,8 @@ public class WatchPanel extends JPanel implements ActionListener {
 
     void playRing() {
         try {
-            File soundFile = new File("ring.wav");
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
+            urlRingSound = getClass().getClassLoader().getResource("ring.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(urlRingSound);
             clip = AudioSystem.getClip();
             clip.open(audioIn);
             clip.start();
@@ -198,9 +202,9 @@ public class WatchPanel extends JPanel implements ActionListener {
 
     void playError() {
         try {
-            File soundFile = new File("error.wav");
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile);
-            clip = AudioSystem.getClip();
+            urlErrorSound = getClass().getClassLoader().getResource("error.wav");
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(urlErrorSound);
+            Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             long startPosition = 1000000;
             clip.setMicrosecondPosition(startPosition);
@@ -209,6 +213,8 @@ public class WatchPanel extends JPanel implements ActionListener {
             e.printStackTrace();
         }
     }
+
+
 
     void completeMessage() {
         JOptionPane.showMessageDialog(null, "Completed!", "Pomodoro", JOptionPane.INFORMATION_MESSAGE);

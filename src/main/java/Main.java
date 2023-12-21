@@ -7,4 +7,3 @@ public class Main {
     }
 
 }
-// zrobić aby się zapiswyało po wyjściu z aplikacji
