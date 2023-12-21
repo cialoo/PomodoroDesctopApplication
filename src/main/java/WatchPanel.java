@@ -52,6 +52,7 @@ public class WatchPanel extends JPanel implements ActionListener {
     private JButton switchButton;
     URL urlErrorSound;
     URL urlRingSound;
+    MyFile myFile = new MyFile("pomodoro_progress.txt");
     WatchPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
@@ -220,6 +221,7 @@ public class WatchPanel extends JPanel implements ActionListener {
         JOptionPane.showMessageDialog(null, "Completed!", "Pomodoro", JOptionPane.INFORMATION_MESSAGE);
         stopRing();
         mainFrame.getProgressPanel().updatelabelTime(remainTime);
+        myFile.saveProgress(remainTime);
     }
 
     void errorMessage() {
