@@ -13,8 +13,7 @@ public class MyFile {
 
     public void saveProgress(long progressTime) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
-//            writer.write(timeStamp + " , " + progressTime);
-            writer.write(String.valueOf(progressTime));
+            writer.write(timeStamp + " , " + progressTime);
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -29,7 +28,10 @@ public class MyFile {
             long sum = 0;
 
             while ((line = reader.readLine()) != null) {
-                sum += Long.parseLong(line);
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    sum += Long.parseLong(parts[1].trim());
+                }
             }
 
             return sum;
@@ -37,5 +39,20 @@ public class MyFile {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public void deleteFile() {
+        File file = new File(fileName);
+
+        if (file.exists()) {
+            file.delete();
+        } else {
+            System.out.println("File does not exist: " + fileName);
+        }
+    }
+
+    public boolean doesFileExist() {
+        File file = new File(fileName);
+        return file.exists() && !file.isDirectory();
     }
 }

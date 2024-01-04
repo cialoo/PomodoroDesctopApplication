@@ -40,7 +40,9 @@ public class MainFrame extends JFrame implements ActionListener {
     public void switchToProgressPanel() {
         CardLayout cardLayout = (CardLayout) getContentPane().getLayout();
         cardLayout.show(getContentPane(), "ProgressPanel");
-        getProgressPanel().updatelabelTime(myFile.loadProgress());
+        if(myFile.doesFileExist()) {
+            getProgressPanel().updatelabelTime(myFile.loadProgress());
+        }
     }
 
     public void switchToWatchPanel() {
