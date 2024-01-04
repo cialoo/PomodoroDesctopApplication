@@ -50,8 +50,24 @@ public class ProgressPanel extends JPanel{
         this.add(labelTime);
     }
 
+//    public void updatelabelTime(long value) {
+//        sumTime = value + sumTime;
+//
+//        if(sumTime > 0) {
+//            hours = (sumTime / 3600000);
+//            minutes = (sumTime / 60000) % 60;
+//            seconds = (sumTime / 1000) % 60;
+//            secondsStr = String.format("%02d", seconds);
+//            minutesStr = String.format("%02d", minutes);
+//            hoursStr = String.format("%02d", hours);
+//            labelTime.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
+//        }
+//
+//    }
+
     public void updatelabelTime(long value) {
-        sumTime = value + sumTime;
+//        sumTime = value + sumTime;
+        sumTime = value;
 
         if(sumTime > 0) {
             hours = (sumTime / 3600000);
