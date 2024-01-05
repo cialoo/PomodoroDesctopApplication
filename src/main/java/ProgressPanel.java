@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +8,7 @@ public class ProgressPanel extends JPanel implements ActionListener{
 
     JLabel label;
     JLabel labelTime;
+    JScrollPane scrollPane;
     private JButton switchButton;
     private MainFrame mainFrame;
     private JButton deleteButton;
@@ -19,6 +21,7 @@ public class ProgressPanel extends JPanel implements ActionListener{
     String minutesStr = String.format("%02d", minutes);
     String hoursStr = String.format("%02d", hours);
     MyFile myFile = new MyFile("pomodoro_progress.txt");
+    JTable table;
     ProgressPanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
 
@@ -27,14 +30,22 @@ public class ProgressPanel extends JPanel implements ActionListener{
 
         label = new JLabel();
         label.setBounds(0,0,500,100);
-        label.setText("Progress");
+        label.setText("Today Progress");
         label.setFont(new Font("Consolas", Font.PLAIN, 35));
         label.setForeground(Color.GREEN);
         label.setHorizontalAlignment(JLabel.CENTER);
         label.setVerticalAlignment(JLabel.CENTER);
 
+        DefaultTableModel model = myFile.loadTableModelFromFile();
+
+        table = new JTable(model);
+        table.setEnabled(false);
+
+        scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(100, 150, 300, 200);
+
         labelTime = new JLabel();
-        labelTime.setBounds(0,200,500,100);
+        labelTime.setBounds(0,50,500,100);
         labelTime.setFont(new Font("Consolas", Font.PLAIN, 35));
         labelTime.setForeground(Color.GREEN);
         labelTime.setHorizontalAlignment(JLabel.CENTER);
@@ -53,6 +64,7 @@ public class ProgressPanel extends JPanel implements ActionListener{
 
         switchButton.addActionListener(e -> mainFrame.switchToWatchPanel());
 
+        this.add(scrollPane);
         this.add(deleteButton);
         this.add(switchButton);
         this.add(label);
@@ -86,6 +98,12 @@ public class ProgressPanel extends JPanel implements ActionListener{
             if (result == JOptionPane.OK_OPTION) {
                 myFile.deleteFile();
                 labelTime.setText("00:00:00");
+                String[][] emptyData = {
+                        {" ", " "}
+                };
+                String[] columnNames = {"Data", "Czas"};
+                DefaultTableModel emptyModel = new DefaultTableModel(emptyData, columnNames);
+                table.setModel(emptyModel);
             }
         }
     }

@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements ActionListener {
 
     ImageIcon image;
-
     private WatchPanel watchPanel;
     private ProgressPanel progressPanel;
     private java.net.URL logoUrl;

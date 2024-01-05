@@ -1,5 +1,6 @@
 import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -222,6 +223,8 @@ public class WatchPanel extends JPanel implements ActionListener {
         stopRing();
         mainFrame.getProgressPanel().updatelabelTime(remainTime);
         myFile.saveProgress(remainTime);
+        DefaultTableModel newTableModel = myFile.loadTableModelFromFile();
+        mainFrame.getProgressPanel().table.setModel(newTableModel);
     }
 
     void errorMessage() {
