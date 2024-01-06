@@ -30,8 +30,8 @@ public class WatchPanel extends JPanel implements ActionListener {
     Timer timer = new Timer(1000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(elapsedTime > 0) {
-                elapsedTime -= 1000;
+            if(elapsedTime >= 0) {
+
                 hours = (elapsedTime/3600000);
                 minutes = (elapsedTime/60000) % 60;
                 seconds = (elapsedTime/1000) % 60;
@@ -39,8 +39,9 @@ public class WatchPanel extends JPanel implements ActionListener {
                 minutesStr = String.format("%02d", minutes);
                 hoursStr = String.format("%02d", hours);
                 labelWatch.setText(hoursStr + ":" + minutesStr + ":" + secondsStr);
+                elapsedTime -= 1000;
 
-                if (elapsedTime <= 0) {
+                if (elapsedTime < 0) {
                     stop();
                     playRing();
                     completeMessage();
@@ -136,6 +137,7 @@ public class WatchPanel extends JPanel implements ActionListener {
         } else if (e.getSource()==buttonStop) {
             stop();
         } else if (e.getSource()==buttonRestart) {
+            set();
             restart();
         }
     }

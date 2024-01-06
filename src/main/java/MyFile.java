@@ -65,7 +65,7 @@ public class MyFile {
                 }
             }
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+
         }
 
         Object[][] data = dailySums.entrySet().stream()
