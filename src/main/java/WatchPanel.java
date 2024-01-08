@@ -144,7 +144,7 @@ public class WatchPanel extends JPanel implements ActionListener {
 
     void start() {
 
-        timer.start();
+        if(remainTime>0) timer.start();
 
     }
 
@@ -157,7 +157,9 @@ public class WatchPanel extends JPanel implements ActionListener {
     void restart() {
 
         stop();
-        elapsedTime = remainTime;
+        if(remainTime>0) {
+            elapsedTime = remainTime;
+        }
         start();
 
     }
