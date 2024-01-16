@@ -9,15 +9,13 @@ import java.util.*;
 public class MyFile {
     private final String fileName;
 
-    static String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
-
     public MyFile(String fileName) {
         this.fileName = fileName;
     }
 
     public void saveProgress(long progressTime) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
-            writer.write(timeStamp + " , " + progressTime);
+            writer.write(new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime()) + " , " + progressTime);
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,8 +66,11 @@ public class MyFile {
 
         }
 
-        Object[][] data = dailySums.entrySet().stream()
-                .map(entry -> new Object[]{entry.getKey().toString(), formatTime(entry.getValue())})
+        List<LocalDate> sortedDates = new ArrayList<>(dailySums.keySet());
+        Collections.sort(sortedDates, Comparator.reverseOrder());
+
+        Object[][] data = sortedDates.stream()
+                .map(date -> new Object[]{date.toString(), formatTime(dailySums.get(date))})
                 .toArray(Object[][]::new);
         String[] columnNames = {"Data", "Czas"};
         return new DefaultTableModel(data, columnNames);
